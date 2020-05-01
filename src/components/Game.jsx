@@ -34,6 +34,15 @@ class Game extends React.Component {
     this.setState({ board: newBoard, x_is_next: !this.state.x_is_next });
   };
 
+  calculateWin = (move, board) => {
+    /* Given a new move ({row, column, value}) and the state of the board,
+      calculate to see if the new move leads to a win,
+      returning the winning row or col or diagonal */
+    const row = move.row;
+    const col = move.col;
+    const val = move.val;
+  };
+
   render() {
     return (
       <div className="game-board">
