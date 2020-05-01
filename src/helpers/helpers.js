@@ -81,24 +81,25 @@ export function getDiag(matrix, coor) {
   // Below and on main diag
   let col_start = 0; // diag always contains first col
   let row_start = n_row - n_col;
-  let col_end = board_len - col_start; // because of diagonal symmetry
-  let row_end = board_len; // always contains last row
+  let row_end = board_len - 1; // always contains last row
+  let col_end = row_end - col_start; // because of diagonal symmetry
 
   if (n_row < n_col) {
     // Change these values if above the main diagonal
     row_start = 0; // diag always contains first row
     col_start = n_col - n_row;
-    row_end = board_len - col_start; // because of diagonal symmetry
-    col_end = board_len; // always contains last col
+    col_end = board_len - 1; // always contains last col
+    row_end = col_end - col_start; // because of diagonal symmetry
   }
 
-  const diag_len = board_len - Math.max([row_end, col_end]);
-  let diag = new Array[diag_len]();
-  let i = 0;
-  for (let x = row_start; x <= row_end; x++) {
-    for (let y = col_start; y <= col_end; y++) {
-      diag[i] = matrix[x][y];
-      i++;
-    }
+  let diag = [];
+  let x = row_start,
+    y = col_start;
+  while (x <= row_end && y <= col_end) {
+    diag.push(matrix[x][y]);
+    x++;
+    y++;
   }
+
+  return diag;
 }
