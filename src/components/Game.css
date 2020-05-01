@@ -21,3 +21,7 @@
   width: 4.4vw;
   height: 4.4vw;
 }
+
+.winning-square {
+  background: red;
+}
