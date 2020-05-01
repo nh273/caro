@@ -96,8 +96,13 @@ class Game extends React.Component {
 }
 
 function Square(props) {
+  let disabled = props.value ? true : false;
   return (
-    <button className={props.className} onClick={props.onClick}>
+    <button
+      className={props.className}
+      disabled={disabled}
+      onClick={props.onClick}
+    >
       {props.value}
     </button>
   );
