@@ -1,4 +1,4 @@
-import { kInARow, kOpenEnded } from "./helpers";
+import { kInARow, kOpenEnded } from "./consecutive";
 
 /* Testing functions that processes arrays of Xs and Ox */
 

@@ -1,4 +1,4 @@
-import { getCol, getDiag } from "./helpers";
+import { getCol, getDiag } from "./getters";
 
 const smallMatrix = [
   ["x", "o", " "],
