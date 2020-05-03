@@ -75,8 +75,10 @@ class Game extends React.Component {
   createOnlineGame = () => {
     // Create new game & get ID
     var newGameRef = db.ref("games/").push();
-    this.setState({ gameId: newGameRef.key });
-    newGameRef.set(this.state);
+    this.setState(
+      { gameId: newGameRef.key, board: this.generateBlankBoard() },
+      () => newGameRef.set(this.state)
+    );
   };
 
   joinOnlineGame = (gameId) => {
