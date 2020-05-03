@@ -2,7 +2,7 @@ import React from "react";
 import { db } from "./firebase";
 import { calculateWin } from "../helpers/calculateWin";
 import "./Game.css";
-import { OnlineGameForm } from "./OnlineGameForm";
+import { OnlineGameForm, Square } from "./GameComponents";
 
 const BOARD_SIZE = 20; // 20 x 20 board
 const DEFAULT_K = 3; // 4 in a row to win if open-ended, 5 if close-ended
@@ -104,6 +104,27 @@ class Game extends React.Component {
     }
   };
 
+  renderBoard = () => {
+    this.state.board.map((row, x) => {
+      return (
+        <div key={x} className="board-row">
+          {row.map((square, y) => {
+            return (
+              <Square
+                key={square.index}
+                value={square.value}
+                className={
+                  square.winner ? "game square winning-square" : "game square"
+                }
+                onClick={() => this.updateBoard(x, y)}
+              />
+            );
+          })}
+        </div>
+      );
+    });
+  };
+
   render() {
     const whose_turn = this.state.xIsNext ? "X" : "O";
     const announcement = this.state.winner
@@ -112,46 +133,14 @@ class Game extends React.Component {
     return (
       <div className="game game-area">
         <p className="game turn-announcement">{announcement}</p>
-        <button onClick={this.createOnlineGame}>Create Online Game</button>
-        <OnlineGameForm joinGame={this.joinOnlineGame} />
-        <div className="game game-board">
-          {this.state.board.map((row, x) => {
-            return (
-              <div key={x} className="board-row">
-                {row.map((square, y) => {
-                  return (
-                    <Square
-                      key={square.index}
-                      value={square.value}
-                      className={
-                        square.winner
-                          ? "game square winning-square"
-                          : "game square"
-                      }
-                      onClick={() => this.updateBoard(x, y)}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
+        <OnlineGameForm
+          joinGame={this.joinOnlineGame}
+          createOnlineGame={this.createOnlineGame}
+        />
+        <div className="game game-board">{this.renderBoard()}</div>
       </div>
     );
   }
-}
-
-function Square(props) {
-  let disabled = props.value ? true : false;
-  return (
-    <button
-      className={props.className}
-      disabled={disabled}
-      onClick={props.onClick}
-    >
-      {props.value}
-    </button>
-  );
 }
 
 export default Game;
