@@ -41,14 +41,12 @@ class Game extends React.Component {
     let oldBoard = this.state.board;
     let newBoard = [...oldBoard];
     newBoard[x][y].value = turn_val;
-    this.setState({ board: newBoard, xIsNext: !this.state.xIsNext });
 
-    this.checkWin(x, y, turn_val, newBoard);
-
-    // If game is online, then update the remote board
-    if (this.state.gameId) {
+    // Update game state after setState is done
+    this.setState({ board: newBoard, xIsNext: !this.state.xIsNext }, () => {
       this.updateOnlineGameState();
-    }
+    });
+    this.checkWin(x, y, turn_val, newBoard);
   };
 
   checkWin = (x, y, turn_val, board, k = DEFAULT_K) => {
@@ -89,8 +87,10 @@ class Game extends React.Component {
   };
 
   updateOnlineGameState = () => {
-    var gameRef = db.ref("games/" + this.state.gameId);
-    gameRef.set(this.state);
+    if (this.state.gameId) {
+      var gameRef = db.ref("games/" + this.state.gameId);
+      gameRef.set(this.state);
+    }
   };
 
   render() {
