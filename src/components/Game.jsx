@@ -16,10 +16,16 @@ class Game extends React.Component {
       winner: null,
 
       // For online games
-      gameId: null, // null if the game is local
+      gameId: this.props.match.params.gameId, // null if the game is local
       playerX: null,
       playerO: null,
     };
+  }
+
+  componentDidMount() {
+    if (this.props.location.pathname === "/online") {
+      this.createOnlineGame();
+    }
   }
 
   generateBlankBoard = () => {
@@ -74,17 +80,20 @@ class Game extends React.Component {
 
   createOnlineGame = () => {
     // Create new game & get ID
-    var newGameRef = db.ref("games/").push();
-    this.setState(
-      { gameId: newGameRef.key, board: this.generateBlankBoard() },
-      () => newGameRef.set(this.state)
-    );
+    const newGameRef = db.ref("games/").push();
+    const gameId = newGameRef.key;
+    this.setState({ gameId: gameId, board: this.generateBlankBoard() }, () => {
+      newGameRef.set(this.state);
+      this.props.history.push("online/" + gameId);
+    });
   };
 
   joinOnlineGame = (gameId) => {
     var gameRef = db.ref("games/" + gameId);
     gameRef.on("value", (gameState) => {
-      this.setState(gameState.val());
+      this.setState(gameState.val(), () =>
+        this.props.history.push("online/" + gameId)
+      );
     });
   };
 
