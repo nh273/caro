@@ -3,7 +3,6 @@ import logo from "./logo.svg";
 import "./App.css";
 
 import Game from "./components/Game";
-
 class App extends React.Component {
   render() {
     return (
@@ -13,7 +12,6 @@ class App extends React.Component {
           <p>Caro</p>
         </header>
         <div className="game-body">
-          This is the body
           <Game />
         </div>
       </div>
