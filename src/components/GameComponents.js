@@ -22,7 +22,7 @@ export function OnlineGameForm(props) {
   );
 }
 
-function Square(props) {
+export function Square(props) {
   let disabled = props.value ? true : false;
   return (
     <button
@@ -33,4 +33,12 @@ function Square(props) {
       {props.value}
     </button>
   );
+}
+
+export function StatusMessages(props) {
+  const whose_turn = props.xIsNext ? "X" : "O";
+  const announcement = props.winner
+    ? "The winner is: " + props.winner
+    : whose_turn + "'s turn";
+  return <p className="game turn-announcement">{announcement}</p>;
 }

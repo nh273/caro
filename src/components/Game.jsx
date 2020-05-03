@@ -2,7 +2,7 @@ import React from "react";
 import { db } from "./firebase";
 import { calculateWin } from "../helpers/calculateWin";
 import "./Game.css";
-import { OnlineGameForm, Square } from "./GameComponents";
+import { OnlineGameForm, Square, StatusMessages } from "./GameComponents";
 
 const BOARD_SIZE = 20; // 20 x 20 board
 const DEFAULT_K = 3; // 4 in a row to win if open-ended, 5 if close-ended
@@ -126,13 +126,12 @@ class Game extends React.Component {
   };
 
   render() {
-    const whose_turn = this.state.xIsNext ? "X" : "O";
-    const announcement = this.state.winner
-      ? "The winner is: " + this.state.winner
-      : whose_turn + "'s turn";
     return (
       <div className="game game-area">
-        <p className="game turn-announcement">{announcement}</p>
+        <StatusMessages
+          xIsNext={this.state.xIsNext}
+          winner={this.state.winner}
+        />
         <OnlineGameForm
           joinGame={this.joinOnlineGame}
           createOnlineGame={this.createOnlineGame}
