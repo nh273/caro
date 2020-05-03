@@ -84,17 +84,16 @@ class Game extends React.Component {
     const gameId = newGameRef.key;
     this.setState({ gameId: gameId, board: this.generateBlankBoard() }, () => {
       newGameRef.set(this.state);
-      this.props.history.push("online/" + gameId);
     });
+    this.props.history.push("online/" + gameId);
   };
 
   joinOnlineGame = (gameId) => {
     var gameRef = db.ref("games/" + gameId);
     gameRef.on("value", (gameState) => {
-      this.setState(gameState.val(), () =>
-        this.props.history.push("online/" + gameId)
-      );
+      this.setState(gameState.val());
     });
+    this.props.history.push("online/" + gameId);
   };
 
   updateOnlineGameState = () => {
