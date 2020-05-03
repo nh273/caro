@@ -105,7 +105,7 @@ class Game extends React.Component {
   };
 
   renderBoard = () => {
-    this.state.board.map((row, x) => {
+    var board = this.state.board.map((row, x) => {
       return (
         <div key={x} className="board-row">
           {row.map((square, y) => {
@@ -123,6 +123,7 @@ class Game extends React.Component {
         </div>
       );
     });
+    return board;
   };
 
   render() {
@@ -132,10 +133,15 @@ class Game extends React.Component {
           xIsNext={this.state.xIsNext}
           winner={this.state.winner}
         />
-        <OnlineGameForm
-          joinGame={this.joinOnlineGame}
-          createOnlineGame={this.createOnlineGame}
-        />
+        {this.state.gameId ? (
+          ""
+        ) : (
+          <OnlineGameForm
+            joinGame={this.joinOnlineGame}
+            createOnlineGame={this.createOnlineGame}
+          />
+        )}
+
         <div className="game game-board">{this.renderBoard()}</div>
       </div>
     );
