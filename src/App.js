@@ -26,31 +26,29 @@ class App extends React.Component {
   render() {
     console.log("app rendering");
     return (
-      <Router>
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              <Link to="/">Caro</Link>
-            </p>
-          </header>
-          <Switch>
-            <Route path="/local" component={Game} />
-            <Route path="/online/:gameId" component={Game} />
-            <Route
-              exact
-              path="/"
-              render={(props) => (
-                <Welcome
-                  {...props}
-                  createOnlineGame={this.createOnlineGame}
-                  joinOnlineGame={this.joinOnlineGame}
-                />
-              )}
-            />
-          </Switch>
-        </div>
-      </Router>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <p>
+            <Link to="/">Caro</Link>
+          </p>
+        </header>
+        <Switch>
+          <Route path="/local" component={Game} />
+          <Route path="/online/:gameId" component={Game} />
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <Welcome
+                {...props}
+                createOnlineGame={this.createOnlineGame}
+                joinOnlineGame={this.joinOnlineGame}
+              />
+            )}
+          />
+        </Switch>
+      </div>
     );
   }
 }
