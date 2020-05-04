@@ -4,7 +4,7 @@ export function OnlineGameForm(props) {
   const [gameId, setGameId] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.joinGame(gameId);
+    props.joinOnlineGame(gameId);
   };
   return (
     <div className="online-game-form">

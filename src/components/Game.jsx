@@ -1,8 +1,8 @@
 import React from "react";
-import { db } from "./firebase";
 import { calculateWin } from "../helpers/calculateWin";
 import "./Game.css";
-import { OnlineGameForm, Square, StatusMessages } from "./GameComponents";
+import { db } from "./firebase";
+import { Square, StatusMessages } from "./GameComponents";
 
 const BOARD_SIZE = 20; // 20 x 20 board
 const DEFAULT_K = 3; // 4 in a row to win if open-ended, 5 if close-ended
@@ -12,19 +12,44 @@ class Game extends React.Component {
     super(props);
     this.state = {
       board: this.generateBlankBoard(), // Nested arrays of rows containing cols
+      isBlank: true,
       xIsNext: true,
       winner: null,
 
-      // For online games
-      gameId: this.props.match.params.gameId, // null if the game is local
       playerX: null,
       playerO: null,
     };
   }
 
   componentDidMount() {
-    if (this.props.location.pathname === "/online") {
-      this.createOnlineGame();
+    console.log("did mount");
+    const gameId = this.props.match.params.gameId;
+    const gameRef = db.ref("games/" + gameId);
+    this.setState({ gameId: gameId });
+    gameRef.on("value", (snapshot) => {
+      if (this.state.isBlank) {
+        console.log("blank, update from online");
+        this.setState(snapshot.val());
+      } else {
+        console.log("not blank, set online");
+        gameRef.set(this.state);
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.state.gameId) {
+      const gameRef = db.ref("games/" + this.state.gameId);
+      gameRef.off();
+    }
+  }
+
+  componentDidUpdate() {
+    console.log("did update");
+    // Update online game state
+    if (this.state.gameId && !this.state.isBlank) {
+      const gameRef = db.ref("games/" + this.state.gameId);
+      gameRef.set(this.state);
     }
   }
 
@@ -48,9 +73,10 @@ class Game extends React.Component {
     let newBoard = [...oldBoard];
     newBoard[x][y].value = turn_val;
 
-    // Update game state after setState is done
-    this.setState({ board: newBoard, xIsNext: !this.state.xIsNext }, () => {
-      this.updateOnlineGameState();
+    this.setState({
+      board: newBoard,
+      xIsNext: !this.state.xIsNext,
+      isBlank: false,
     });
     this.checkWin(x, y, turn_val, newBoard);
   };
@@ -75,31 +101,6 @@ class Game extends React.Component {
         board: board,
         winner: turn_val,
       });
-    }
-  };
-
-  createOnlineGame = () => {
-    // Create new game & get ID
-    const newGameRef = db.ref("games/").push();
-    const gameId = newGameRef.key;
-    this.setState({ gameId: gameId, board: this.generateBlankBoard() }, () => {
-      newGameRef.set(this.state);
-    });
-    this.props.history.push("online/" + gameId);
-  };
-
-  joinOnlineGame = (gameId) => {
-    var gameRef = db.ref("games/" + gameId);
-    gameRef.on("value", (gameState) => {
-      this.setState(gameState.val());
-    });
-    this.props.history.push("online/" + gameId);
-  };
-
-  updateOnlineGameState = () => {
-    if (this.state.gameId) {
-      var gameRef = db.ref("games/" + this.state.gameId);
-      gameRef.set(this.state);
     }
   };
 
@@ -132,14 +133,6 @@ class Game extends React.Component {
           xIsNext={this.state.xIsNext}
           winner={this.state.winner}
         />
-        {this.state.gameId ? (
-          ""
-        ) : (
-          <OnlineGameForm
-            joinGame={this.joinOnlineGame}
-            createOnlineGame={this.createOnlineGame}
-          />
-        )}
 
         <div className="game game-board">{this.renderBoard()}</div>
       </div>
