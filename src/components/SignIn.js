@@ -1,6 +1,7 @@
 import React from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import firebase from "firebase";
+import * as firebase from "firebase/app";
+import * as firebaseui from "firebaseui";
 
 import { auth } from "./firebase";
 
@@ -18,7 +19,8 @@ export function SignIn(props) {
         signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
         requireDisplayName: false,
       },
-      { provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID },
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID,
     ],
   };
 
