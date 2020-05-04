@@ -1,4 +1,5 @@
 import React from "react";
+import * as firebase from "firebase/app";
 import { Switch, Route, Link, withRouter } from "react-router-dom";
 import logo from "./logo.svg";
 import "./App.css";
@@ -6,6 +7,28 @@ import { db } from "./components/firebase";
 import Welcome from "./components/Welcome";
 import Game from "./components/Game";
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      uid: null,
+      displayName: null,
+    };
+  }
+
+  componentDidMount() {
+    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.handleSignInSuccess(user);
+      } else {
+        this.setState({ uid: null, displayName: null });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
+  }
+
   createOnlineGame = () => {
     // Create new game & get ID
     const gameRef = db.ref("games/").push();
@@ -17,6 +40,11 @@ class App extends React.Component {
     this.props.history.push("/online/" + gameId);
   };
 
+  handleSignInSuccess = (user) => {
+    var { uid, displayName } = user;
+    this.setState({ uid: uid, displayName: displayName });
+  };
+
   render() {
     return (
       <div className="App">
@@ -26,6 +54,7 @@ class App extends React.Component {
             <Link to="/">Caro</Link>
           </p>
         </header>
+        {this.state.uid ? "Welcome " + this.state.displayName : ""}
         <Switch>
           <Route path="/local" component={Game} />
           <Route path="/online/:gameId" component={Game} />
@@ -37,6 +66,8 @@ class App extends React.Component {
                 {...props}
                 createOnlineGame={this.createOnlineGame}
                 joinOnlineGame={this.joinOnlineGame}
+                onSignInSuccess={this.handleSignInSuccess}
+                signedIn={this.state.uid}
               />
             )}
           />
