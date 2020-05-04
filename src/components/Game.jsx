@@ -26,11 +26,7 @@ class Game extends React.Component {
     const gameRef = db.ref("games/" + gameId);
     this.setState({ gameId: gameId });
     gameRef.on("value", (snapshot) => {
-      if (this.state.isBlank) {
-        this.setState(snapshot.val());
-      } else {
-        gameRef.set(this.state);
-      }
+      this.setState(snapshot.val());
     });
   }
 
