@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  withRouter,
-} from "react-router-dom";
+import { Switch, Route, Link, withRouter } from "react-router-dom";
 import logo from "./logo.svg";
 import "./App.css";
 import { db } from "./components/firebase";
