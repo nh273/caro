@@ -22,16 +22,13 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    console.log("did mount");
     const gameId = this.props.match.params.gameId;
     const gameRef = db.ref("games/" + gameId);
     this.setState({ gameId: gameId });
     gameRef.on("value", (snapshot) => {
       if (this.state.isBlank) {
-        console.log("blank, update from online");
         this.setState(snapshot.val());
       } else {
-        console.log("not blank, set online");
         gameRef.set(this.state);
       }
     });
@@ -45,7 +42,6 @@ class Game extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("did update");
     // Update online game state
     if (this.state.gameId && !this.state.isBlank) {
       const gameRef = db.ref("games/" + this.state.gameId);
