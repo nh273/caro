@@ -41,7 +41,9 @@ class App extends React.Component {
           </p>
         </header>
         <Switch>
-          <Route path="/local" component={Game} />
+          <Route path="/local">
+            <Game local />
+          </Route>
           <Route
             path="/online/:gameId"
             render={(props) => (

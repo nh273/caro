@@ -3,7 +3,7 @@ import { calculateWin } from "../helpers/calculateWin";
 import "./Game.css";
 import { db } from "./firebase";
 import { UserContext } from "../context/UserProvider";
-import { Square, StatusMessages } from "./GameComponents";
+import { Square, StatusMessages, OnlineGameMessages } from "./GameComponents";
 import { SignIn } from "./SignIn";
 
 const BOARD_SIZE = 20; // 20 x 20 board
@@ -26,16 +26,18 @@ class Game extends React.Component {
   static contextType = UserContext;
 
   componentDidMount() {
-    const gameId = this.props.match.params.gameId;
-    const gameRef = db.ref("games/" + gameId);
-    this.setState({ gameId: gameId });
-    gameRef.on("value", (snapshot) => {
-      let loadedGameState = snapshot.val();
-      this.setState(loadedGameState);
+    if (!this.props.local) {
+      const gameId = this.props.match.params.gameId;
+      const gameRef = db.ref("games/" + gameId);
+      this.setState({ gameId: gameId });
+      gameRef.on("value", (snapshot) => {
+        let loadedGameState = snapshot.val();
+        this.setState(loadedGameState);
 
-      // Once you have connected to the remote
-      this._implicitlyJoinGameByLink(loadedGameState);
-    });
+        // Once you have connected to the remote
+        this._implicitlyJoinGameByLink(loadedGameState);
+      });
+    }
   }
 
   _implicitlyJoinGameByLink(loadedGameState) {
@@ -130,6 +132,19 @@ class Game extends React.Component {
     }
   };
 
+  renderOnlineMsg = () => {
+    if (!this.props.local) {
+      return (
+        <OnlineGameMessages
+          gameState={this.state}
+          gameUrl={
+            "https://caro-game-online.web.app/" + this.props.location.pathname
+          }
+        />
+      );
+    }
+  };
+
   renderBoard = () => {
     var board = this.state.board.map((row, x) => {
       return (
@@ -157,14 +172,9 @@ class Game extends React.Component {
 
     return (
       <div className="game game-area">
-        <SignIn />
-        <StatusMessages
-          gameState={this.state}
-          gameUrl={
-            "https://caro-game-online.web.app/" + this.props.location.pathname
-          }
-        />
-
+        {!this.props.local && <SignIn />}
+        {this.renderOnlineMsg()}
+        <StatusMessages gameState={this.state} />
         <div
           className={
             isBoardClickable ? "game game-board" : "game disabled-game-board"

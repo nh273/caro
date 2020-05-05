@@ -35,7 +35,7 @@ export function Square(props) {
   );
 }
 
-function OnlineGameMessages(props) {
+export function OnlineGameMessages(props) {
   let { playerX, playerO } = props.gameState;
   if (!!playerX && !playerO) {
     return (
@@ -84,10 +84,5 @@ export function StatusMessages(props) {
   const announcement = props.gameState.winner
     ? "The winner is: " + props.gameState.winner
     : whose_turn + "'s turn";
-  return (
-    <div className="game turn-announcement">
-      <OnlineGameMessages gameState={props.gameState} gameUrl={props.gameUrl} />
-      {announcement}
-    </div>
-  );
+  return <div className="game turn-announcement">{announcement}</div>;
 }
