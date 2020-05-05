@@ -2,13 +2,14 @@ import React from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
+import Modal from "react-modal";
 
 import { auth } from "./firebase";
 
 export function SignIn(props) {
   var uiConfig = {
     callbacks: {
-      signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+      signInSuccessWithAuthResult: (authResult) => {
         props.onSignInSuccess(authResult.user);
         return false;
       },

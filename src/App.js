@@ -6,6 +6,7 @@ import "./App.css";
 import { db } from "./components/firebase";
 import Welcome from "./components/Welcome";
 import Game from "./components/Game";
+import { SignIn } from "./components/SignIn";
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -66,8 +67,12 @@ class App extends React.Component {
                 {...props}
                 createOnlineGame={this.createOnlineGame}
                 joinOnlineGame={this.joinOnlineGame}
-                onSignInSuccess={this.handleSignInSuccess}
-                signedIn={this.state.uid}
+                signInUI={
+                  <SignIn
+                    signedIn={this.state.uid}
+                    onSignInSuccess={this.handleSignInSuccess}
+                  />
+                }
               />
             )}
           />
