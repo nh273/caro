@@ -122,7 +122,9 @@ class Game extends React.Component {
 
   isItMyTurn = () => {
     let user = this.context;
-    if (this.state.winner) {
+    if (this.props.local) {
+      return true;
+    } else if (this.state.winner) {
       return false;
     } else if (user && user.uid === this.state.playerX) {
       // If you are player X
