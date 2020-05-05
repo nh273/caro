@@ -4,6 +4,7 @@ import "./Game.css";
 import { db } from "./firebase";
 import { UserContext } from "../context/UserProvider";
 import { Square, StatusMessages } from "./GameComponents";
+import { SignIn } from "./SignIn";
 
 const BOARD_SIZE = 20; // 20 x 20 board
 const DEFAULT_K = 3; // 4 in a row to win if open-ended, 5 if close-ended
@@ -29,8 +30,22 @@ class Game extends React.Component {
     const gameRef = db.ref("games/" + gameId);
     this.setState({ gameId: gameId });
     gameRef.on("value", (snapshot) => {
-      this.setState(snapshot.val());
+      let loadedGameState = snapshot.val();
+      this.setState(loadedGameState);
+      this._implicitlyJoinGameByLink(loadedGameState);
     });
+  }
+
+  _implicitlyJoinGameByLink(loadedGameState) {
+    const gameId = this.props.match.params.gameId;
+    let user = this.context;
+    if (
+      user &&
+      !loadedGameState.playerO &&
+      loadedGameState.playerX !== user.uid
+    ) {
+      this.props.joinOnlineGame(gameId);
+    }
   }
 
   componentWillUnmount() {
@@ -101,10 +116,6 @@ class Game extends React.Component {
 
   isItMyTurn = () => {
     let user = this.context;
-    if (user) {
-      let uid = user.uid;
-      console.log("uid on game: " + uid);
-    }
 
     if (user && user.uid === this.state.playerX) {
       // If you are player X
@@ -141,6 +152,7 @@ class Game extends React.Component {
 
     return (
       <div className="game game-area">
+        <SignIn />
         <StatusMessages
           xIsNext={this.state.xIsNext}
           winner={this.state.winner}

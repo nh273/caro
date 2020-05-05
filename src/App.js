@@ -19,8 +19,6 @@ class App extends React.Component {
     updates["games/" + gameId + "/playerX"] = uid;
     updates["users/" + uid + "/games/" + gameId] = true;
     db.ref().update(updates);
-
-    console.log("uid on create: " + uid);
   };
 
   joinOnlineGame = (gameId) => {
@@ -46,7 +44,9 @@ class App extends React.Component {
           <Route path="/local" component={Game} />
           <Route
             path="/online/:gameId"
-            render={(props) => <Game {...props} />}
+            render={(props) => (
+              <Game {...props} joinOnlineGame={this.joinOnlineGame} />
+            )}
           />
           <Route
             exact
