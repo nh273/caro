@@ -1,49 +1,36 @@
 import React from "react";
-import * as firebase from "firebase/app";
 import { Switch, Route, Link, withRouter } from "react-router-dom";
 import logo from "./logo.svg";
 import "./App.css";
+import { UserContext } from "./context/UserProvider";
 import { db } from "./components/firebase";
 import Welcome from "./components/Welcome";
 import Game from "./components/Game";
-import { SignIn } from "./components/SignIn";
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      uid: null,
-      displayName: null,
-    };
-  }
-
-  componentDidMount() {
-    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.handleSignInSuccess(user);
-      } else {
-        this.setState({ uid: null, displayName: null });
-      }
-    });
-  }
-
-  componentWillUnmount() {
-    this.unregisterAuthObserver();
-  }
-
+  static contextType = UserContext;
   createOnlineGame = () => {
     // Create new game & get ID
     const gameRef = db.ref("games/").push();
     const gameId = gameRef.key;
     this.props.history.push("/online/" + gameId);
+
+    const uid = this.context.uid;
+    let updates = {};
+    updates["games/" + gameId + "/playerX"] = uid;
+    updates["users/" + uid + "/games/" + gameId] = true;
+    db.ref().update(updates);
+
+    console.log("uid on create: " + uid);
   };
 
   joinOnlineGame = (gameId) => {
     this.props.history.push("/online/" + gameId);
-  };
 
-  handleSignInSuccess = (user) => {
-    var { uid, displayName } = user;
-    this.setState({ uid: uid, displayName: displayName });
+    const uid = this.context.uid;
+    let updates = {};
+    updates["games/" + gameId + "/playerO"] = uid;
+    updates["users/" + uid + "/games/" + gameId] = true;
+    db.ref().update(updates);
   };
 
   render() {
@@ -55,10 +42,12 @@ class App extends React.Component {
             <Link to="/">Caro</Link>
           </p>
         </header>
-        {this.state.uid ? "Welcome " + this.state.displayName : ""}
         <Switch>
           <Route path="/local" component={Game} />
-          <Route path="/online/:gameId" component={Game} />
+          <Route
+            path="/online/:gameId"
+            render={(props) => <Game {...props} />}
+          />
           <Route
             exact
             path="/"
@@ -67,12 +56,6 @@ class App extends React.Component {
                 {...props}
                 createOnlineGame={this.createOnlineGame}
                 joinOnlineGame={this.joinOnlineGame}
-                signInUI={
-                  <SignIn
-                    signedIn={this.state.uid}
-                    onSignInSuccess={this.handleSignInSuccess}
-                  />
-                }
               />
             )}
           />

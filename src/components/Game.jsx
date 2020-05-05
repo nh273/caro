@@ -2,6 +2,7 @@ import React from "react";
 import { calculateWin } from "../helpers/calculateWin";
 import "./Game.css";
 import { db } from "./firebase";
+import { UserContext } from "../context/UserProvider";
 import { Square, StatusMessages } from "./GameComponents";
 
 const BOARD_SIZE = 20; // 20 x 20 board
@@ -20,6 +21,8 @@ class Game extends React.Component {
       playerO: null,
     };
   }
+
+  static contextType = UserContext;
 
   componentDidMount() {
     const gameId = this.props.match.params.gameId;
@@ -96,6 +99,21 @@ class Game extends React.Component {
     }
   };
 
+  isItMyTurn = () => {
+    let user = this.context;
+    if (user) {
+      let uid = user.uid;
+      console.log("uid on game: " + uid);
+    }
+
+    if (user && user.uid === this.state.playerX) {
+      // If you are player X
+      return this.state.xIsNext;
+    } else {
+      return !this.state.xIsNext;
+    }
+  };
+
   renderBoard = () => {
     var board = this.state.board.map((row, x) => {
       return (
@@ -119,6 +137,8 @@ class Game extends React.Component {
   };
 
   render() {
+    let isBoardClickable = this.isItMyTurn();
+
     return (
       <div className="game game-area">
         <StatusMessages
@@ -126,7 +146,13 @@ class Game extends React.Component {
           winner={this.state.winner}
         />
 
-        <div className="game game-board">{this.renderBoard()}</div>
+        <div
+          className={
+            isBoardClickable ? "game game-board" : "game disabled-game-board"
+          }
+        >
+          {this.renderBoard()}
+        </div>
       </div>
     );
   }

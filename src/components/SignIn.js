@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import * as firebase from "firebase/app";
 import * as firebaseui from "firebaseui";
 import Modal from "react-modal";
 
 import { auth } from "./firebase";
+import { UserContext } from "../context/UserProvider";
 
 export function SignIn(props) {
+  const user = useContext(UserContext);
+
   var uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: (authResult) => {
-        props.onSignInSuccess(authResult.user);
         return false;
       },
     },
@@ -25,17 +27,18 @@ export function SignIn(props) {
     ],
   };
 
-  if (!props.signedIn) {
+  if (!user) {
     return (
-      <div id="signin-widget">
+      <Modal isOpen ariaHideApp={false}>
         <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-      </div>
+      </Modal>
     );
   }
 
   return (
     <div id="signin-widget">
-      <button onClick={() => firebase.auth().signOut()}>Sign out</button>{" "}
+      Welcome, {user.displayName}
+      <button onClick={() => auth.signOut()}>Sign out</button>{" "}
     </div>
   );
 }

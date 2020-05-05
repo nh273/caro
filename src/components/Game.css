@@ -1,7 +1,12 @@
-.game-board {
+.game-board,
+.disabled-game-board {
   display: flex;
   flex-direction: row;
   padding: 6vw;
+}
+
+.disabled-game-board {
+  pointer-events: none;
 }
 
 .board-row::after {
