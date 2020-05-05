@@ -7,7 +7,7 @@ import { Square, StatusMessages } from "./GameComponents";
 import { SignIn } from "./SignIn";
 
 const BOARD_SIZE = 20; // 20 x 20 board
-const DEFAULT_K = 3; // 4 in a row to win if open-ended, 5 if close-ended
+const DEFAULT_K = 4; // 4 in a row to win if open-ended, 5 if close-ended
 
 class Game extends React.Component {
   constructor(props) {
@@ -120,8 +120,9 @@ class Game extends React.Component {
 
   isItMyTurn = () => {
     let user = this.context;
-
-    if (user && user.uid === this.state.playerX) {
+    if (this.state.winner) {
+      return false;
+    } else if (user && user.uid === this.state.playerX) {
       // If you are player X
       return this.state.xIsNext;
     } else {
@@ -159,7 +160,9 @@ class Game extends React.Component {
         <SignIn />
         <StatusMessages
           gameState={this.state}
-          gameUrl={this.props.location.pathname}
+          gameUrl={
+            "https://caro-game-online.web.app/" + this.props.location.pathname
+          }
         />
 
         <div
