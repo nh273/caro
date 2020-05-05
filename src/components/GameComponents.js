@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 export function OnlineGameForm(props) {
   const [gameId, setGameId] = useState("");
@@ -35,10 +35,59 @@ export function Square(props) {
   );
 }
 
+function OnlineGameMessages(props) {
+  let { playerX, playerO } = props.gameState;
+  if (!!playerX && !playerO) {
+    return (
+      <div className="invite-prompt">
+        "Waiting for player O. Invite by sending them the link to the game"
+        <CopyTextArea textToCopy={props.gameUrl} />
+      </div>
+    );
+  } else {
+    return "";
+  }
+}
+
+function CopyTextArea(props) {
+  const [copySuccess, setCopySuccess] = useState("");
+  const textAreaRef = useRef(null);
+
+  function copyToClipboard(e) {
+    textAreaRef.current.select();
+    document.execCommand("copy");
+    e.target.focus();
+    setCopySuccess("Copied!");
+  }
+
+  return (
+    <div>
+      {
+        /* Logical shortcut for only displaying the
+          button if the copy command exists */
+        document.queryCommandSupported("copy") && (
+          <div>
+            <button onClick={copyToClipboard}>Copy</button>
+            {copySuccess}
+          </div>
+        )
+      }
+      <form>
+        <textarea readOnly ref={textAreaRef} value={props.textToCopy} />
+      </form>
+    </div>
+  );
+}
+
 export function StatusMessages(props) {
-  const whose_turn = props.xIsNext ? "X" : "O";
-  const announcement = props.winner
-    ? "The winner is: " + props.winner
+  const whose_turn = props.gameState.xIsNext ? "X" : "O";
+  const announcement = props.gameState.winner
+    ? "The winner is: " + props.gameState.winner
     : whose_turn + "'s turn";
-  return <p className="game turn-announcement">{announcement}</p>;
+  return (
+    <div className="game turn-announcement">
+      <OnlineGameMessages gameState={props.gameState} gameUrl={props.gameUrl} />
+      {announcement}
+    </div>
+  );
 }

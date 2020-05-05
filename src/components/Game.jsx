@@ -32,6 +32,8 @@ class Game extends React.Component {
     gameRef.on("value", (snapshot) => {
       let loadedGameState = snapshot.val();
       this.setState(loadedGameState);
+
+      // Once you have connected to the remote
       this._implicitlyJoinGameByLink(loadedGameState);
     });
   }
@@ -45,6 +47,8 @@ class Game extends React.Component {
       loadedGameState.playerX !== user.uid
     ) {
       this.props.joinOnlineGame(gameId);
+    } else if (user && !loadedGameState.playerX) {
+      this.setState({ playerX: user.uid });
     }
   }
 
@@ -154,8 +158,8 @@ class Game extends React.Component {
       <div className="game game-area">
         <SignIn />
         <StatusMessages
-          xIsNext={this.state.xIsNext}
-          winner={this.state.winner}
+          gameState={this.state}
+          gameUrl={this.props.location.pathname}
         />
 
         <div
