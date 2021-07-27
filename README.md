@@ -1,6 +1,9 @@
 This is a React implementation of a n,m,k game variant called Caro.
 
 
+# Deploy
+This project was deployed with Firebase. Using firebase CLI,  deploy with `firebase deploy`.
+# Create
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
