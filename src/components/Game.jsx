@@ -72,6 +72,12 @@ class Game extends React.Component {
   generateBlankBoard = () => {
     const board = new Array(BOARD_SIZE);
     let i = 0;
+    // Usage of `let` and `var` should be consistent. At the most basic level,
+    // their usage are kind of the same and thus I would like to see either one 
+    // of them, but not both. On a higher level, understanding their differences
+    // could help too, and in which case I'd recommend `let` over `var` anyday.
+    // In fact, my code is void of `var`'s. As to why, there are already tons of 
+    // StackOverflow answers on the matter.
     for (var x = 0; x < BOARD_SIZE; x++) {
       const row = new Array(BOARD_SIZE);
       for (var y = 0; y < BOARD_SIZE; y++) {
@@ -86,6 +92,21 @@ class Game extends React.Component {
   updateBoard = (x, y) => {
     const turn_val = this.state.xIsNext ? "X" : "O";
     let oldBoard = this.state.board;
+    // I get what you're trying to do here, which is great. We should always
+    // create a copy of the old object to produce a new state, instead of
+    // modifying the old state directly, which you have done here, only
+    // partially. `oldBoard` is a 2-D array, whose contents are 1-D arrays,
+    // which in turn are reference based objects too. They also need to be
+    // copied. As it is right now, you're actually reusing the same arrays you
+    // had from the beginning. What you have done here is a _shallow_ copy of
+    // `oldBoard`. A deep copy is generally safer and demonstrate the
+    // candidate's deeper understanding of what goes on under the hood. 
+    //
+    // However, creating a deep copy is a more involved process and could be
+    // overlooked by certain reviewers since the candidate already demonstrated
+    // awareness of copying over mutating. However, for brownie points, I
+    // recommend looking at [ImmutableJS](https://immutable-js.com/). It's
+    // helpful for complex state manipulation.
     let newBoard = [...oldBoard];
     newBoard[x][y].value = turn_val;
 
@@ -145,32 +166,51 @@ class Game extends React.Component {
         />
       );
     }
+    // This function is lacking an `else` branch, which means when
+    // `this.props.local` is truthy it is actually a `void` function, or it's
+    // returning `undefined`. Well, since JavaScript is already a crime itself,
+    // doing this actually is fine and permissible.  However, canonically,
+    // rendering nothing in React requires you to return `null` (or `false`
+    // under certain circumstances). Doing this shows that you're aware of the 
+    // edge cases that might happen to your app, and are vigilant about covering
+    // your ass and making sure it works for the end user no matter what.
+    else {
+      return null
+    }
   };
 
   renderBoard = () => {
-    var board = this.state.board.map((row, x) => {
-      return (
-        <div key={x} className="board-row">
-          {row.map((square, y) => {
-            return (
-              <Square
-                key={square.index}
-                value={square.value}
-                className={
-                  square.winner ? "game square winning-square" : "game square"
-                }
-                onClick={() => this.updateBoard(x, y)}
-              />
-            );
-          })}
-        </div>
-      );
-    });
-    return board;
+    // While returning an array of elements to a `render` function is fine and
+    // permissible, it is usually the case that render functions return a single
+    // element instead of an array of elements. In this case, I'd wrap them around
+    // a <React.Fragment> pair of tags, or <></> for short, just to group them
+    // under a single node.
+    return (
+      <>
+        {this.state.board.map((row, x) => (
+          <div key={x} className="board-row">
+            {row.map((square, y) => {
+              return (
+                <Square
+                  key={square.index}
+                  value={square.value}
+                  className={
+                    square.winner ? "game square winning-square" : "game square"
+                  }
+                  onClick={() => this.updateBoard(x, y)}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </>
+    )
   };
 
   render() {
-    let isBoardClickable = this.isItMyTurn();
+    // This value will never change after its initial value is calculated, it's
+    // more idiomatic to use `const` instead of `let`
+    const isBoardClickable = this.isItMyTurn();
 
     return (
       <div className="game game-area">
