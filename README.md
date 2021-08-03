@@ -1,5 +1,6 @@
-This is a React implementation of a n,m,k game variant called Caro.
+This is a React implementation of a n,m,k game variant called Caro. The game is played between 2 players. Win by getting 4 stones (X or O) in a row, column, diagonal or anti-diagonal. If your line is blocked at either (or both) ends, you need 5 stones to win.
 
+[Live Demo](https://caro-game-online.web.app/)
 
 # Deploy
 This project was deployed with Firebase. Using firebase CLI,  deploy with `firebase deploy`.
