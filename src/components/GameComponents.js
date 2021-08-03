@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 
 export function OnlineGameForm(props) {
+  /** Form to create or join online game */
   const [gameId, setGameId] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +24,7 @@ export function OnlineGameForm(props) {
 }
 
 export function Square(props) {
+  /** A single square in the game. Unclickable if disabled */
   let disabled = props.value ? true : false;
   return (
     <button
@@ -50,6 +52,9 @@ export function OnlineGameMessages(props) {
 }
 
 function CopyTextArea(props) {
+  /** Provide a convenient text area that can be copied
+   * by clicking a button to easily get game link.
+   */
   const [copySuccess, setCopySuccess] = useState("");
   const textAreaRef = useRef(null);
 

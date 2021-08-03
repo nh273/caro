@@ -41,6 +41,10 @@ class Game extends React.Component {
   }
 
   _implicitlyJoinGameByLink(loadedGameState) {
+    /** Helper method to help user join a game that had been created
+     * by clicking a link to the game
+     */
+    // gameId is the unique game identifier, parsed from the route
     const gameId = this.props.match.params.gameId;
     let user = this.context;
     if (
@@ -50,6 +54,7 @@ class Game extends React.Component {
     ) {
       this.props.joinOnlineGame(gameId);
     } else if (user && !loadedGameState.playerX) {
+      // If there is not already a player X, this player is player X
       this.setState({ playerX: user.uid });
     }
   }
@@ -70,11 +75,15 @@ class Game extends React.Component {
   }
 
   generateBlankBoard = () => {
+    /** Generate a blank board (an empty nested array with dimensions
+     * BOARD_SIZE x BOARD_SIZE)
+     */
     const board = new Array(BOARD_SIZE);
     let i = 0;
     for (var x = 0; x < BOARD_SIZE; x++) {
       const row = new Array(BOARD_SIZE);
       for (var y = 0; y < BOARD_SIZE; y++) {
+        // Each cell has a "winner" property for highlighting winning cells
         row[y] = { index: i, value: "", winner: false };
         i++;
       }
@@ -84,6 +93,9 @@ class Game extends React.Component {
   };
 
   updateBoard = (x, y) => {
+    /** Update the board by adding the appropriate stone (X or O) to
+     * coordinate (x, y) on the board
+     */
     const turn_val = this.state.xIsNext ? "X" : "O";
     let oldBoard = this.state.board;
     let newBoard = [...oldBoard];
@@ -94,10 +106,15 @@ class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
       isBlank: false,
     });
+    // check win after every move
     this.checkWin(x, y, turn_val, newBoard);
   };
 
   checkWin = (x, y, turn_val, board, k = DEFAULT_K) => {
+    /** Check whether a move by player indicated a turn_val at x,y
+     * on a board with state 'board' will lead to a win if the
+     * winning threshold is k.
+    */
     let winningLine = calculateWin([x, y], turn_val, board, k);
 
     // Will only setState if there is a winning line
@@ -121,10 +138,15 @@ class Game extends React.Component {
   };
 
   isItMyTurn = () => {
+    /** Determine if it's the local player's turn to play
+     * Disable the board if it is not.
+     */
     let user = this.context;
     if (this.props.local) {
+      // always true if playing local game
       return true;
     } else if (this.state.winner) {
+      // disable board if winner has been determined
       return false;
     } else if (user && user.uid === this.state.playerX) {
       // If you are player X

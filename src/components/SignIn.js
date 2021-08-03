@@ -8,6 +8,7 @@ import { auth } from "./firebase";
 import { UserContext } from "../context/UserProvider";
 
 export function SignIn(props) {
+  /** Sign in pop up with player management using firebase */
   const user = useContext(UserContext);
 
   var uiConfig = {
