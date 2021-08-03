@@ -1,4 +1,6 @@
-This is a React implementation of a n,m,k game variant called Caro. The game is played between 2 players. Win by getting 4 stones (X or O) in a row, column, diagonal or anti-diagonal. If your line is blocked at either (or both) ends, you need 5 stones to win.
+This is a React implementation of a n,m,k game variant called Caro. The game is played between 2 players on a m x n board. Win by getting k stones (X or O) in a row, column, diagonal or anti-diagonal. If your line is blocked at either (or both) ends, you need k+1 stones to win.
+
+The game can be played locally (2 players on the same computer) or online.
 
 [Live Demo](https://caro-game-online.web.app/)
 
