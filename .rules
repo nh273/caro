@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "games": {
+      "$gameId": {
+      ".read": true,
+      ".write": "root.child('users').child(auth.uid).child('games').child($gameId).exists()"
+      }
+    }
+  }
+}
