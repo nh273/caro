@@ -5,6 +5,12 @@
       ".read": true,
       ".write": "root.child('users').child(auth.uid).child('games').child($gameId).exists()"
       }
+    },
+    "users": {
+      "$user_id":{
+        ".read": true,
+        ".write": "auth.uid === $user_id"
+      }
     }
   }
 }
