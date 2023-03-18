@@ -81,3 +81,96 @@ export function getAnti(matrix, coor) {
 
   return diag;
 }
+
+// There is a method to replicate what you've done in this file, albeit with
+// higher effort and requiring more meticulous care, that completely eliminates
+// the need for copying the values into a new array. Copying usually carries
+// an overhead, and admittedly insignificant for the scope of this app, but well,
+// an engineer does what an engineer does best: over-engineering.
+// Here, I'm demonstrating how to create a Slice (or some might call a View) of
+// the board. It's a shadow copy of the salient region of the board, which does
+// not copy the values from the board but instead act as a magnifier into the
+// actual board.
+
+class MatrixRow {
+  constructor(board, row) {
+    this.board = board
+    this.row = row
+  }
+
+  get length() { return this.board.size }
+  get = (col) => { return this.board.get(this.row, col) }
+}
+
+class MatrixColumn {
+  constructor(board, col) {
+    this.board = board
+    this.col = col
+  }
+
+  get length() { return this.board.size }
+  get = (row) => { return this.board.get(row, this.col) }
+}
+
+class MatrixDiagonal {
+  constructor(board, )
+}
+class Matrix {
+  /** 
+   * This is called an overloaded constructor, or more generally an overloaded 
+   * function. What that means is that it can be called with different parameters,
+   * and behaves differently when supplied with different kinds of parameters.
+   * If we had written this in typescript, here are the two signatures:
+   * 
+   * ```
+   * constructor(size: number)
+   * constructor(values: number[][])
+   * ```
+   */
+  constructor(sizeOrValues) {
+    if (Array.isArray(sizeOrValues)) {
+      // Passing in a new values array
+      this.values = sizeOrValues
+      this.size = sizeOrValues.length
+    } else if (typeof sizeOrValues === 'number') {
+      // Passing in a size value
+      // A little magic of mine to populate a size x size 2-D array. 
+      this.values = [new Array(sizeOrValues).fill().map((_, row) => (
+        new Array(sizeOrValues).fill().map((_, col) => ({ index: row * size + col, value: '', winner: false }))
+      ))]
+      this.size = sizeOrValues
+    } else {
+      throw new Error('Invalid constructor parameter for Board:', sizeOrValues)
+    }
+  }
+
+  /** Get the value at the specified coordinates  */
+  get = (row, col) => this.values[row][col]
+
+  /** Creates a deep clone of the board with the value changed */
+  setting = (row, col, value) => new Matrix(this.values.map((rowValues, currentRow) => {
+    if (row !== currentRow) return [...rowValues]
+    return rowValues.map((cellValue, currentCol) => {
+      if (col !== currentCol) return cellValue
+      return { ...cellValue, value }
+    })
+  }))
+  
+  getRow = (row) => new MatrixRow(this, row)
+  getCol = (col) => new MatrixColumn(this, col)
+}
+
+function demo() {
+  const board = new Matrix(10)
+  const board2ndCol = board.getCol(1)
+  // This would print out all of the values from the 2nd column of `board`.
+  // This approach does not require copying of values from the main matrix.
+  for (let row = 0; row < board.size; row++) {
+    console.log(board2ndCol.get(row))
+  }
+}
+
+// Again, this stuff might be too advanced and an over-engineering of what might
+// have been required. This is just to show you that, had this been a take-home
+// assignment from a candidate, I'll value them much higher if they did a slice
+// approach than a copying approach.
